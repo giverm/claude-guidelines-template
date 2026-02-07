@@ -309,6 +309,32 @@ This is a template - customize it for your needs! Some ideas:
 - Extend the test suite
 - Improve documentation
 
+## Future Directions
+
+Potential enhancements we'd like to explore:
+
+### Skill Management
+- **Central skill repository**: Pull common skills from a shared registry
+- **Skill versioning**: Track skill versions, allow pinning to specific versions
+- **Skill dependencies**: Skills that reference or depend on other skills
+
+### Developer Experience
+- **Interactive setup wizard**: Guided initial configuration (`./build.rb --init`)
+- **Guideline linting**: Validate guideline format, check for common issues, verify skill references exist
+- **Git hooks**: Auto-rebuild on commit, validate changes pre-commit
+
+### Advanced Features
+- **Multi-project diffs**: Compare guidelines across projects to find inconsistencies
+- **Conditional includes**: Include common files based on tech stack detection
+- **CI/CD examples**: GitHub Actions, GitLab CI templates for automated validation
+- **Migration tools**: Import existing CLAUDE.md files into template structure
+
+**Have ideas?** Open an issue or PR! We're particularly interested in:
+- Real-world usage patterns and learnings
+- Skills that could be shared broadly
+- Improvements to the build system
+- Better testing approaches
+
 ## License
 
 MIT License - See LICENSE file
