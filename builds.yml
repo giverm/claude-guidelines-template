@@ -1,0 +1,24 @@
+# Build configuration for CLAUDE.local.md files
+#
+# Each build combines common guidelines with project-specific content
+# and copies skills to .claude/skills/ directories.
+
+builds:
+  # Example project - Remove this and add your own projects
+  - name: Example Project
+    project: projects/example-project/main.project.md
+    output: example-project/CLAUDE.local.md
+    # link_to: ~/Projects/example-project/CLAUDE.local.md  # Uncomment and set path
+    common:
+      - common/preferences.md
+    skills:
+      - example-skill
+
+  # Add your projects here:
+  # - name: My Project
+  #   project: projects/my-project/main.project.md
+  #   output: my-project/CLAUDE.local.md
+  #   link_to: ~/Projects/my-project/CLAUDE.local.md
+  #   common:
+  #     - common/preferences.md
+  #   skills: []

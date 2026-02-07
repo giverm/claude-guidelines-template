@@ -1,0 +1,25 @@
+# Ignore sensitive project-specific notes
+**/secrets.md
+**/private-notes.md
+**/*.private.md
+
+# Ignore backup files
+*.bak
+*.backup
+*~
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Ignore editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Ignore any experimental drafts (use branches instead)
+**/DRAFT-*.md
+
+# Ignore Obsidian workspace
+.obsidian/
