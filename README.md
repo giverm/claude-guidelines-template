@@ -64,7 +64,9 @@ builds:
 
 This generates:
 - `my-project/CLAUDE.local.md` (in this repo)
-- Symlink at `~/Projects/my-project/CLAUDE.local.md` (in your actual project)
+- `my-project/.claude/skills/` (skill directories, if configured)
+- Symlink at `~/Projects/my-project/CLAUDE.local.md` (points to generated file)
+- Symlink at `~/Projects/my-project/.claude/skills/` (points to generated skills)
 
 Claude Code will now use these guidelines when working in your project!
 
@@ -338,9 +340,8 @@ MIT License - See LICENSE file
 
 ## Resources
 
-- [Claude Code Documentation](https://docs.claude.ai/claude-code)
-- [Skills Documentation](https://docs.claude.ai/claude-code/skills)
-- [CLAUDE.md Format](https://docs.claude.ai/claude-code/claude-md)
+- [Claude Code Documentation](https://code.claude.com/docs)
+- [Skills Documentation](https://code.claude.com/docs/en/skills)
 
 ---
 
