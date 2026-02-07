@@ -11,6 +11,58 @@ A template repository for managing [Claude Code](https://claude.ai/code) guideli
 - **✅ Tested**: Comprehensive test suite ensures reliability
 - **📝 YAML Config**: Easy-to-edit configuration
 
+## Why Use This System?
+
+### The Problem
+
+Claude Code loads guidelines from:
+- `~/.claude/CLAUDE.md` (global for all projects)
+- `PROJECT_DIR/CLAUDE.local.md` (project-specific)
+
+**Simple approaches:**
+- **Global only** (`~/.claude/CLAUDE.md`) - One file for everything, but no project-specific context
+- **Per-project only** - Each project has its own `CLAUDE.local.md`, but you duplicate common patterns across projects
+
+### When This System Makes Sense
+
+**Use this system if you have:**
+- ✅ **Multiple projects** - More than 2-3 projects that need guidelines
+- ✅ **Shared patterns** - Common workflows you use across projects (git conventions, review process, decision frameworks)
+- ✅ **Project-specific needs** - Different tech stacks, structures, or domains per project
+- ✅ **Evolving practices** - You want to track how your development practices improve over time
+
+**Benefits you get:**
+1. **DRY Principle** - Write common patterns once, reuse across projects
+2. **Modular Composition** - Each project selects which common guidelines to include (not all-or-nothing)
+3. **Version Control** - Track guideline evolution, see what worked, rollback changes
+4. **Project Customization** - Tech stack and domain-specific guidelines per project, with overrides for common patterns
+5. **Context Optimization** - Skills system reduces baseline context by loading details on-demand
+6. **Consistency** - Update a pattern once, rebuild to apply everywhere that uses it
+
+### When Simpler Approaches Work Better
+
+**Skip this system if:**
+- ❌ **Single project** - Just use `CLAUDE.local.md` in that project's repo
+- ❌ **No shared patterns** - Every project is completely different
+- ❌ **Static guidelines** - You don't update practices regularly
+- ❌ **Quick experiment** - Testing Claude Code for the first time
+
+**Use instead:**
+```bash
+# Global universal principles
+~/.claude/CLAUDE.md
+
+# Project-specific guidelines (version controlled in each repo)
+~/Projects/my-app/CLAUDE.local.md
+~/Projects/another-app/CLAUDE.local.md
+```
+
+### The Hybrid Approach
+
+Many users benefit from combining both:
+- **`~/.claude/CLAUDE.md`** - Truly universal principles (work for any project)
+- **This system** - Your shared patterns across YOUR projects with project-specific customization
+
 ## Quick Start
 
 ### 1. Clone This Template
