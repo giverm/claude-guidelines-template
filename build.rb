@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 # Build script to combine common guidelines with project-specific content
-# Usage: ./build.rb [--watch]
+# Usage: ./build.rb
 
 require 'fileutils'
 require 'pathname'
@@ -208,47 +208,7 @@ def build_all
   success_count == builds.length
 end
 
-def watch_mode
-  require 'listen'
-
-  puts "👀 Watching for changes..."
-  puts "   Press Ctrl+C to stop"
-  puts
-
-  # Initial build
-  build_all
-  puts
-  puts "---"
-  puts
-
-  # Watch for changes
-  listener = Listen.to('common', 'projects') do |modified, added, removed|
-    changes = modified + added + removed
-    next if changes.empty?
-
-    puts "📝 Detected changes:"
-    changes.each { |file| puts "   #{file}" }
-    puts
-
-    build_all
-    puts
-    puts "---"
-    puts
-  end
-
-  listener.start
-  sleep
-rescue LoadError
-  puts "Error: 'listen' gem not found"
-  puts "Install with: gem install listen"
-  exit 1
-end
-
 # Main execution
 if __FILE__ == $PROGRAM_NAME
-  if ARGV.include?('--watch')
-    watch_mode
-  else
-    exit(build_all ? 0 : 1)
-  end
+  exit(build_all ? 0 : 1)
 end

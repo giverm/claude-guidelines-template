@@ -164,9 +164,6 @@ Hierarchical resolution:
 # Build all projects
 ./build.rb
 
-# Watch mode (auto-rebuild on changes)
-./build.rb --watch
-
 # Via rake
 rake build
 ```
