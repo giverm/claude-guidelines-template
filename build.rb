@@ -130,6 +130,19 @@ def copy_skills(config, project_dir, output_path)
   skills_output_dir = output_path.dirname.join('.claude', 'skills')
   FileUtils.mkdir_p(skills_output_dir)
 
+  # Clean up skills not in config (remove skills that were removed from builds.yml)
+  if skills_output_dir.exist?
+    existing_skills = skills_output_dir.children.select(&:directory?).map { |d| d.basename.to_s }
+    configured_skills = config[:skills].map(&:to_s)
+    skills_to_remove = existing_skills - configured_skills
+
+    skills_to_remove.each do |skill_name|
+      skill_path = skills_output_dir.join(skill_name)
+      FileUtils.rm_rf(skill_path)
+      puts "  → Removed: #{skill_name} (not in config)"
+    end
+  end
+
   projects_root = Pathname.new("projects")
   common_skills_dir = Pathname.new("skills")
 
@@ -192,11 +205,49 @@ rescue StandardError => e
   puts "  ⚠️  Failed to create symlink: #{e.message}"
 end
 
+def clean_orphaned_builds(builds)
+  puts "Checking for orphaned build outputs..."
+
+  # Get all configured outputs
+  configured_outputs = builds.map { |b| Pathname.new(b[:output]) }
+  configured_claude_dirs = configured_outputs.map { |p| p.dirname.join('.claude') }
+
+  # Find all existing CLAUDE.local.md files and .claude directories
+  existing_outputs = Pathname.glob('**/CLAUDE.local.md')
+  existing_claude_dirs = Pathname.glob('**/.claude').select(&:directory?)
+
+  # Remove outputs not in config
+  orphaned_outputs = existing_outputs - configured_outputs
+  orphaned_outputs.each do |orphan|
+    puts "  → Removing orphaned: #{orphan}"
+    FileUtils.rm_f(orphan)
+  end
+
+  # Remove .claude directories not in config (but preserve if they have non-skill content)
+  orphaned_claude_dirs = existing_claude_dirs - configured_claude_dirs
+  orphaned_claude_dirs.each do |orphan|
+    # Only remove if it only contains skills (safe to remove generated content)
+    children = orphan.children.map { |c| c.basename.to_s }
+    if children.empty? || children == ['skills']
+      puts "  → Removing orphaned .claude: #{orphan}"
+      FileUtils.rm_rf(orphan)
+    else
+      puts "  ⚠️  Skipping .claude with user content: #{orphan}"
+    end
+  end
+
+  puts unless orphaned_outputs.empty? && orphaned_claude_dirs.empty?
+end
+
 def build_all
   puts "Building CLAUDE.local.md files..."
   puts
 
   builds = defined?(BUILDS) ? BUILDS : load_builds
+
+  # Clean up orphaned builds first
+  clean_orphaned_builds(builds)
+
   success_count = 0
   builds.each do |config|
     success_count += 1 if build_file(config)

@@ -320,4 +320,189 @@ class BuildTest < Minitest::Test
     assert File.exist?('output/.claude/skills/test-skill/examples/example.md'),
            'Skill subdirectory should be preserved'
   end
+
+  def test_skill_cleanup_removes_old_skills
+    # Create two skills
+    create_file('skills/skill-a/SKILL.md', "# Skill A\n")
+    create_file('skills/skill-b/SKILL.md', "# Skill B\n")
+    create_file('projects/test-project/main.project.md', "# Test\n")
+
+    # First build with both skills
+    create_builds_config([{
+      'name' => 'Test',
+      'project' => 'projects/test-project/main.project.md',
+      'output' => 'output/CLAUDE.local.md',
+      'common' => [],
+      'skills' => ['skill-a', 'skill-b']
+    }])
+
+    build_all
+
+    # Verify both skills exist
+    assert File.exist?('output/.claude/skills/skill-a/SKILL.md'), 'Skill A should exist'
+    assert File.exist?('output/.claude/skills/skill-b/SKILL.md'), 'Skill B should exist'
+
+    # Second build with only skill-a
+    create_builds_config([{
+      'name' => 'Test',
+      'project' => 'projects/test-project/main.project.md',
+      'output' => 'output/CLAUDE.local.md',
+      'common' => [],
+      'skills' => ['skill-a']
+    }])
+
+    # Capture output
+    out, _err = capture_io do
+      build_all
+    end
+
+    # Verify skill-b was removed
+    assert File.exist?('output/.claude/skills/skill-a/SKILL.md'), 'Skill A should still exist'
+    refute File.exist?('output/.claude/skills/skill-b'), 'Skill B directory should be removed'
+    assert_includes out, 'Removed: skill-b', 'Should report skill-b removal'
+  end
+
+  def test_orphaned_build_cleanup
+    create_file('projects/project1/main.project.md', "# Project 1\n")
+    create_file('projects/project2/main.project.md', "# Project 2\n")
+
+    # First build with two projects
+    create_builds_config([
+      {
+        'name' => 'Project 1',
+        'project' => 'projects/project1/main.project.md',
+        'output' => 'output1/CLAUDE.local.md',
+        'common' => []
+      },
+      {
+        'name' => 'Project 2',
+        'project' => 'projects/project2/main.project.md',
+        'output' => 'output2/CLAUDE.local.md',
+        'common' => []
+      }
+    ])
+
+    build_all
+
+    # Verify both outputs exist
+    assert File.exist?('output1/CLAUDE.local.md'), 'Output 1 should exist'
+    assert File.exist?('output2/CLAUDE.local.md'), 'Output 2 should exist'
+
+    # Second build with only project1
+    create_builds_config([{
+      'name' => 'Project 1',
+      'project' => 'projects/project1/main.project.md',
+      'output' => 'output1/CLAUDE.local.md',
+      'common' => []
+    }])
+
+    # Capture output
+    out, _err = capture_io do
+      build_all
+    end
+
+    # Verify output2 was removed
+    assert File.exist?('output1/CLAUDE.local.md'), 'Output 1 should still exist'
+    refute File.exist?('output2/CLAUDE.local.md'), 'Output 2 should be removed'
+    assert_includes out, 'Removing orphaned: output2/CLAUDE.local.md', 'Should report removal'
+  end
+
+  def test_orphaned_claude_directory_cleanup
+    create_file('skills/test-skill/SKILL.md', "# Skill\n")
+    create_file('projects/project1/main.project.md', "# Project 1\n")
+    create_file('projects/project2/main.project.md', "# Project 2\n")
+
+    # First build with two projects
+    create_builds_config([
+      {
+        'name' => 'Project 1',
+        'project' => 'projects/project1/main.project.md',
+        'output' => 'output1/CLAUDE.local.md',
+        'common' => [],
+        'skills' => ['test-skill']
+      },
+      {
+        'name' => 'Project 2',
+        'project' => 'projects/project2/main.project.md',
+        'output' => 'output2/CLAUDE.local.md',
+        'common' => [],
+        'skills' => ['test-skill']
+      }
+    ])
+
+    build_all
+
+    # Verify both .claude directories exist
+    assert File.exist?('output1/.claude/skills'), 'Output 1 .claude should exist'
+    assert File.exist?('output2/.claude/skills'), 'Output 2 .claude should exist'
+
+    # Second build with only project1
+    create_builds_config([{
+      'name' => 'Project 1',
+      'project' => 'projects/project1/main.project.md',
+      'output' => 'output1/CLAUDE.local.md',
+      'common' => [],
+      'skills' => ['test-skill']
+    }])
+
+    # Capture output
+    out, _err = capture_io do
+      build_all
+    end
+
+    # Verify output2/.claude was removed
+    assert File.exist?('output1/.claude'), 'Output 1 .claude should still exist'
+    refute File.exist?('output2/.claude'), 'Output 2 .claude should be removed'
+    assert_includes out, 'Removing orphaned .claude: output2/.claude', 'Should report removal'
+  end
+
+  def test_claude_directory_with_user_content_preserved
+    create_file('projects/project1/main.project.md', "# Project 1\n")
+
+    # Build once to create .claude directory
+    create_builds_config([{
+      'name' => 'Project 1',
+      'project' => 'projects/project1/main.project.md',
+      'output' => 'output1/CLAUDE.local.md',
+      'common' => [],
+      'skills' => []
+    }])
+
+    build_all
+
+    # Add user content to .claude directory
+    create_file('output1/.claude/user-file.txt', "User content\n")
+
+    # Build again with no projects (should try to clean up)
+    create_builds_config([])
+
+    # Capture output
+    out, _err = capture_io do
+      build_all
+    end
+
+    # Verify .claude directory was preserved
+    assert File.exist?('output1/.claude'), '.claude with user content should be preserved'
+    assert File.exist?('output1/.claude/user-file.txt'), 'User file should still exist'
+    assert_includes out, 'Skipping .claude with user content', 'Should warn about preservation'
+  end
+
+  def test_empty_claude_directory_cleaned_up
+    create_file('projects/project1/main.project.md', "# Project 1\n")
+
+    # Create empty .claude directory manually
+    FileUtils.mkdir_p('output1/.claude')
+
+    # Build with no projects (should clean up empty .claude)
+    create_builds_config([])
+
+    # Capture output
+    out, _err = capture_io do
+      build_all
+    end
+
+    # Verify empty .claude was removed
+    refute File.exist?('output1/.claude'), 'Empty .claude should be removed'
+    assert_includes out, 'Removing orphaned .claude: output1/.claude', 'Should report removal'
+  end
 end
