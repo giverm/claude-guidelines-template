@@ -101,7 +101,7 @@ Edit `builds.yml`:
 builds:
   - name: My Project
     project: projects/my-project/main.project.md
-    output: my-project/CLAUDE.local.md
+    output: generated/my-project/guidelines.md
     link_to: ~/Projects/my-project/CLAUDE.local.md  # Path to actual project
     common:
       - common/preferences.md
@@ -115,8 +115,8 @@ builds:
 ```
 
 This generates:
-- `my-project/CLAUDE.local.md` (in this repo)
-- `my-project/.claude/skills/` (skill directories, if configured)
+- `generated/my-project/guidelines.md` (in this repo)
+- `generated/my-project/.claude/skills/` (skill directories, if configured)
 - Symlink at `~/Projects/my-project/CLAUDE.local.md` (points to generated file)
 - Symlink at `~/Projects/my-project/.claude/skills/` (points to generated skills)
 
@@ -135,6 +135,10 @@ claude-guidelines/
 ├── skills/                    # On-demand skills (loaded when invoked)
 │   └── example-skill/
 │       └── SKILL.md
+├── generated/                 # Generated files (created by build.rb)
+│   └── example-project/
+│       ├── guidelines.md      # → Symlinked to actual project
+│       └── .claude/           # Skills directory
 ├── learnings/                 # Track what works (not in builds)
 │   └── README.md
 ├── test/                      # Test suite
@@ -247,7 +251,7 @@ rake verify
    ```yaml
    - name: My Project
      project: projects/my-project/main.project.md
-     output: my-project/CLAUDE.local.md
+     output: generated/my-project/guidelines.md
      link_to: ~/Projects/my-project/CLAUDE.local.md
      common:
        - common/preferences.md

@@ -7,7 +7,7 @@ builds:
   # Example project - Remove this and add your own projects
   - name: Example Project
     project: projects/example-project/main.project.md
-    output: example-project/CLAUDE.local.md
+    output: generated/example-project/guidelines.md
     # link_to: ~/Projects/example-project/CLAUDE.local.md  # Uncomment and set path
     common:
       - common/preferences.md
@@ -17,7 +17,7 @@ builds:
   # Add your projects here:
   # - name: My Project
   #   project: projects/my-project/main.project.md
-  #   output: my-project/CLAUDE.local.md
+  #   output: generated/my-project/guidelines.md
   #   link_to: ~/Projects/my-project/CLAUDE.local.md
   #   common:
   #     - common/preferences.md

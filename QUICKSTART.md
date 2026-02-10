@@ -12,7 +12,7 @@ cd my-guidelines
 ## 2. Remove Example
 
 ```bash
-rm -rf projects/example-project example-project/
+rm -rf projects/example-project generated/example-project/
 ```
 
 ## 3. Create Your First Project
@@ -50,7 +50,7 @@ Edit `builds.yml`:
 builds:
   - name: My App
     project: projects/my-app/main.project.md
-    output: my-app/CLAUDE.local.md
+    output: generated/my-app/guidelines.md
     link_to: ~/Projects/my-app/CLAUDE.local.md  # ← Change this path
     common:
       - common/preferences.md
