@@ -1,10 +1,3 @@
----
-name: example-skill
-description: Example skill showing the format
-version: 1.0.0
-category: example
----
-
 # Example Skill
 
 **Purpose:** This is an example skill demonstrating the format and structure.
@@ -21,18 +14,26 @@ Use `/example-skill` when:
 
 Skills contain detailed, step-by-step instructions that are loaded on-demand when invoked with `/skill-name`.
 
-### Step 1: Create Frontmatter
+### Step 1: Create Skill Directory
+
+```bash
+mkdir -p skills/my-skill
+```
+
+### Step 2: Create meta.yml (Optional)
+
+Store metadata separately so it doesn't consume context tokens when the skill is loaded:
 
 ```yaml
----
-name: skill-name
+name: my-skill
 description: Brief description
 version: 1.0.0
 category: workflow|review|git|testing
----
 ```
 
-### Step 2: Write Instructions
+The build script reads `meta.yml` to display version info during builds.
+
+### Step 3: Write SKILL.md
 
 Write clear, actionable instructions:
 - Use headings to organize
@@ -40,22 +41,17 @@ Write clear, actionable instructions:
 - Provide context
 - Add checklists
 
-### Step 3: Add to Build Config
+### Step 4: Add to Build Config
 
 In `builds.yml`:
 ```yaml
 skills:
-  - skill-name
+  - my-skill
 ```
 
 ## Example
 
 ```markdown
----
-name: commit
-description: Create well-formatted git commits
----
-
 # Commit Guidelines
 
 Before committing:

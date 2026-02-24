@@ -16,7 +16,7 @@ def load_builds
     return []
   end
 
-  yaml = YAML.load_file(config_path)
+  yaml = YAML.safe_load_file(config_path, permitted_classes: [], permitted_symbols: [], aliases: false)
   return [] unless yaml && yaml['builds']
 
   yaml['builds'].map { |build| build.transform_keys(&:to_sym) }
@@ -175,7 +175,14 @@ def copy_skills(config, project_dir, output_path)
     FileUtils.rm_rf(skill_dest) if skill_dest.exist?
     FileUtils.cp_r(skill_source, skill_dest)
 
-    puts "  → Skill: #{skill_name}"
+    # Read meta.yml for display if it exists
+    meta_path = skill_source.join('meta.yml')
+    if meta_path.exist?
+      meta = YAML.safe_load_file(meta_path, permitted_classes: [], permitted_symbols: [], aliases: false)
+      puts "  → Skill: #{skill_name} v#{meta['version']}"
+    else
+      puts "  → Skill: #{skill_name}"
+    end
   end
 end
 

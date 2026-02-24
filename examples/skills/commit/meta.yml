@@ -1,0 +1,4 @@
+name: commit
+description: Create well-formatted git commits
+version: 1.0.0
+category: git

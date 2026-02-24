@@ -1,10 +1,3 @@
----
-name: commit
-description: Create well-formatted git commits
-version: 1.0.0
-category: git
----
-
 # Commit: Git Commit Guidelines
 
 **Purpose:** Comprehensive guide for creating clear, informative git commits.

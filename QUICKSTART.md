@@ -94,14 +94,19 @@ For detailed workflows (>50 lines), create skills:
 ```bash
 mkdir -p skills/commit
 cat > skills/commit/SKILL.md << 'EOF'
----
-name: commit
-description: Create well-formatted commits
----
-
 # Commit Guidelines
 
 [Detailed instructions...]
+EOF
+```
+
+Optionally add a `meta.yml` for version tracking:
+```bash
+cat > skills/commit/meta.yml << 'EOF'
+name: commit
+description: Create well-formatted commits
+version: 1.0.0
+category: git
 EOF
 ```
 

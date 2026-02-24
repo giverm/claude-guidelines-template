@@ -270,30 +270,33 @@ rake verify
    mkdir -p skills/my-skill
    ```
 
-2. **Create SKILL.md with frontmatter:**
+2. **Create SKILL.md:**
    ```markdown
-   ---
-   name: my-skill
-   description: What this skill does
-   ---
-
    # My Skill
 
    Detailed instructions...
    ```
 
-3. **Add to project in `builds.yml`:**
+3. **Create meta.yml (optional, for version tracking):**
+   ```yaml
+   name: my-skill
+   description: What this skill does
+   version: 1.0.0
+   category: workflow
+   ```
+
+4. **Add to project in `builds.yml`:**
    ```yaml
    skills:
      - my-skill
    ```
 
-4. **Rebuild:**
+5. **Rebuild:**
    ```bash
    ./build.rb
    ```
 
-5. **Invoke in Claude:**
+6. **Invoke in Claude:**
    ```
    /my-skill
    ```
